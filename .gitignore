@@ -87,3 +87,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# files from Yelp dataset
+.json
+.csv
+.pdf

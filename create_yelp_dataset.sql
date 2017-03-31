@@ -1,9 +1,12 @@
 -- drop the tables if they already exist
 
-DROP TABLE IF EXISTS business CASCADE;
-DROP TABLE IF EXISTS check_in CASCADE;
-DROP TABLE IF EXISTS review CASCADE;
-DROP VIEW IF EXISTS tip CASCADE;
+DROP TABLE IF EXISTS businesses CASCADE;
+DROP TABLE IF EXISTS business_hours CASCADE;
+-- DROP TABLE IF EXISTS friends CASCADE;
+DROP TABLE IF EXISTS elite_users CASCADE;
+DROP TABLE IF EXISTS check_ins CASCADE;
+DROP TABLE IF EXISTS reviews CASCADE;
+DROP TABLE IF EXISTS tips CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 
 -- create the tables and views
@@ -12,161 +15,92 @@ DROP TABLE IF EXISTS users CASCADE;
 
 
 -- business
-CREATE TABLE business (
-    bus_id character(100) NOT NULL ,
-    bName CHARACTER (200),
-    neighborhood CHARACTER (200),
-    address CHARACTER (200),
-    city CHARACTER (200),
-    state CHARACTER (15),
-    postCode CHARACTER (10),
-    latitude double,
-    longitude DOUBLE ,
-    stars DOUBLE ,
-    review_count INTEGER ,
+CREATE TABLE businesses (
+    bus_id character varying(100) PRIMARY KEY,
+    bus_name character varying(200),
+    neighborhood character varying(200),
+    address character varying(200),
+    city character varying(200),
+    state character varying(15),
+    postCode character varying(10),
+    latitude double precision,
+    longitude double precision,
+    stars double precision,
+    review_count integer,
     is_open boolean,
-    attributes NULL, -- an array of strings: each array element is an attribute
-    catergories NULL, -- an array of strings of business categories
-    hours NULL, -- an array of strings of business hours
+    attributes text[], -- an array of strings: each array element is an attribute
+    categories text[] -- an array of strings of business categories
+);
+
+-- business hours
+CREATE TABLE business_hours (
+    bus_id character varying(100) REFERENCES "businesses",
+    day integer NOT NULL,
+    open_time time,
+    close_time time
 );
 
 
 -- check-ins
-CREATE TABLE check_in (
-  bus_id character(100) NOT NULL,
+CREATE TABLE check_ins (
+  bus_id character varying(100) NOT NULL REFERENCES "businesses",
+  day integer,
+  hour integer,
+  count integer
 );
 
 
 
 CREATE TABLE users (
-    user_id character(100) NOT NULL,
-    name character(20) NOT NULL,
-    review_count INTEGER NOT NULL,
+    user_id character varying(100) NOT NULL PRIMARY KEY,
+    name character varying(100) NOT NULL,
+    review_count integer NOT NULL,
     yelp_since date NOT NULL, -- format like 2009-12-19
-    friends NULL,-- Arrays of friends ID
-    useful INTEGER , -- number of useful votes sent by the user
-    funny INTEGER , -- number of funny votes sent by the user
-    cool INTEGER , -- number of cool votes sent by the user
-    fans INTEGER , -- number of fans the user has
-    elite NULL, -- array of years that the user was elite
-    avg_stars DOUBLE , -- floating points
-    compliment_hot INTEGER , -- number of hot compliments received by the user
-    complement_more INTEGER , -- number of more compliments received by the user
-    complement_profile INTEGER , -- number of profile compliments received by the user
-    complement_cute INTEGER , -- number of cute compliments received by the user
-    complement_list INTEGER , -- number of list compliments received by the user
-    complement_note INTEGER , -- number of note compliments received by the user
-    complement_plain INTEGER , -- number of plain compliments received by the user
-    complement_cool INTEGER , -- number of cool compliments received by the user
-    complement_funny INTEGER , -- number of funny compliments received by the user
-    complement_writer INTEGER , -- number of writer compliments received by the user
-    complement_photoes INTEGER  -- number of photos compliments received by the user
-
+    friends text[], -- ideally, friendship would be a separate table, but populating that table takes too long
+    useful integer, -- number of useful votes sent by the user
+    funny integer, -- number of funny votes sent by the user
+    cool integer, -- number of cool votes sent by the user
+    fans integer, -- number of fans the user has
+    avg_stars double precision,
+    compliment_hot integer, -- number of hot compliments received by the user
+    compliment_more integer, -- number of more compliments received by the user
+    compliment_profile integer, -- number of profile compliments received by the user
+    compliment_cute integer, -- number of cute compliments received by the user
+    compliment_list integer, -- number of list compliments received by the user
+    compliment_note integer, -- number of note compliments received by the user
+    compliment_plain integer, -- number of plain compliments received by the user
+    compliment_cool integer, -- number of cool compliments received by the user
+    compliment_funny integer, -- number of funny compliments received by the user
+    compliment_writer integer, -- number of writer compliments received by the user
+    compliment_photos integer  -- number of photos compliments received by the user
 );
 
-CREATE TABLE review (
-    review_id character(100) NOT NULL,
-    user_id character(100) NOT NULL,
-    bus_id character(100) NOT NULL ,
-    stars DOUBLE ,
-    rDate DATE ,
-    text CHARACTER (2000),
-    useful INTEGER , -- number of useful votes received
-    funny INTEGER , -- number of funny votes received
-    cool INTEGER  -- number of cool votes received
+-- CREATE TABLE friends (
+--     user_id1 character varying(100) REFERENCES users (user_id),
+--     user_id2 character varying(100)
+-- );
+
+CREATE TABLE elite_users (
+    user_id character varying(100) REFERENCES users,
+    year integer NOT NULL
 );
 
-CREATE TABLE tip (
-  text CHARACTER (2000),
-  tDate DATE , -- format like 2009-12-19
-  likes INTEGER , -- Compliment count
-  bus_id CHARACTER (100),
-  user_id CHARACTER (100)
+CREATE TABLE reviews (
+    review_id character varying(100) NOT NULL PRIMARY KEY,
+    user_id character varying(100) NOT NULL REFERENCES users,
+    bus_id character varying(100) NOT NULL REFERENCES businesses,
+    stars double precision,
+    review_date date,
+    review_text text,
+    useful integer, -- number of useful votes received
+    funny integer, -- number of funny votes received
+    cool integer -- number of cool votes received
 );
 
-
-
--- load the data
-
-COPY bills FROM '/vagrant/lab3/bills.csv' WITH
-(FORMAT csv, HEADER true, DELIMITER ',');
-COPY person_roles FROM '/vagrant/lab3/person_roles.csv' WITH
-(FORMAT csv, HEADER true, DELIMITER ',');
-COPY persons FROM '/vagrant/lab3/persons.csv' WITH
-(FORMAT csv, HEADER true, DELIMITER ',');
-COPY person_votes FROM '/vagrant/lab3/person_votes.csv' WITH
-(FORMAT csv, HEADER true, DELIMITER ',');
-COPY states FROM '/vagrant/lab3/states.csv' WITH
-(FORMAT csv, HEADER true, DELIMITER ',');
-COPY votes FROM '/vagrant/lab3/votes.csv' WITH
-(FORMAT csv, HEADER true, DELIMITER ',');
-COPY votes_re_amendments FROM '/vagrant/lab3/votes_re_amendments.csv' WITH
-(FORMAT csv, HEADER true, DELIMITER ',');
-COPY votes_re_bills FROM '/vagrant/lab3/votes_re_bills.csv' WITH
-(FORMAT csv, HEADER true, DELIMITER ',');
-COPY votes_re_nominations FROM '/vagrant/lab3/votes_re_nominations.csv' WITH
-(FORMAT csv, HEADER true, DELIMITER ',');
-
-
--- after data is loaded, add key and foreign key constraints and corresponding indexes
-
-alter table only business
-    add constraint bus_id primary key (id);
-
-alter table only users
-    add constraint bills_session_type_number_key unique (session, type, number);
-
-alter table only users
-    add constraint user_id primary key (id);
-
-alter table only persons
-    add constraint persons_id_govtrack_key unique (id_govtrack);
-
-alter table only persons
-    add constraint persons_id_lis_key unique (id_lis);
-
-alter table only persons
-    add constraint persons_pkey primary key (id);
-
-alter table only states
-    add constraint states_pkey primary key (id);
-
-alter table only votes
-    add constraint votes_chamber_session_number_key unique (chamber, session, number);
-
-alter table only votes
-    add constraint votes_pkey primary key (id);
-
-alter table only votes_re_amendments
-    add constraint votes_re_amendments_pkey primary key (vote_id);
-
-alter table only votes_re_bills
-    add constraint votes_re_bills_pkey primary key (vote_id);
-
-alter table only votes_re_nominations
-    add constraint votes_re_nominations_pkey primary key (vote_id);
-
-alter table only person_roles
-    add constraint person_roles_person_id_fkey foreign key (person_id) references persons(id);
-
-alter table only person_roles
-    add constraint person_roles_state_fkey foreign key (state) references states(id);
-
-alter table only person_votes
-    add constraint person_votes_person_id_fkey foreign key (person_id) references persons(id);
-
-alter table only person_votes
-    add constraint person_votes_vote_id_fkey foreign key (vote_id) references votes(id);
-
-alter table only votes_re_amendments
-    add constraint votes_re_amendments_vote_id_fkey foreign key (vote_id) references votes(id);
-
-alter table only votes_re_bills
-    add constraint votes_re_bills_bill_id_fkey foreign key (bill_id) references bills(id);
-
-alter table only votes_re_bills
-    add constraint votes_re_bills_vote_id_fkey foreign key (vote_id) references votes(id);
-
-alter table only votes_re_nominations
-    add constraint votes_re_nominations_vote_id_fkey foreign key (vote_id) references votes(id);
-
+CREATE TABLE tips (
+  tip_text text,
+  tip_date date, -- format like 2009-12-19
+  likes int, -- like count
+  bus_id character varying(100) REFERENCES businesses,
+  user_id character varying(100) REFERENCES users
+);
