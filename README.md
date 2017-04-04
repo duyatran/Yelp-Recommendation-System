@@ -1,5 +1,11 @@
 # COSC 480 DS Project
-First, download the dataset (add instructions later)
+First, create a folder named "yelp_data" in the folder "source"
+
+        cd source
+        mkdir yelp_data
+        cd yelp_data
+
+Download the dataset [here](https://www.yelp.com/dataset_challenge/dataset) into yelp_data.
 
 Decompress the dataset file, the result will be several json files (and some pdfs)
         
@@ -14,7 +20,7 @@ Create the database
         
         createdb yelp
 
-Create the database's schema and populate it with data.
+In the "source" folder, create the database's schema and populate it with data.
 
 WARNING: this will take quite a long time (about 40 minutes on my laptop). I finished my philosophy class reading while waiting for it.
         
