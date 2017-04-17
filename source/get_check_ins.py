@@ -19,7 +19,7 @@ def querry_and_record(fout_name, command):
     try:
         cur.execute(command)
     except:
-        print "There were problems executing the command " + REVIEW_COMMANDS[what_review]
+        print "There were problems executing the command " + command
     for record in cur:
         for i in range(len(record) - 1):
             fout.write(str(record[i]) + ",")
