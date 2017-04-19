@@ -26,8 +26,6 @@ Each week, please spend 5-10 minutes writing a brief status report.  This does n
 * Ha: 33.3 %
 * Drew: 33.3 %
 
-* Our main goal for this week is to explore some interesting questions that we can answer from the data, and prepare the data to answer such questions.
-
 ## Week 3
 
 #Report for the week of 04/04/2017 to 04/10/2017.
@@ -39,8 +37,6 @@ Each week, please spend 5-10 minutes writing a brief status report.  This does n
 #Work distribution:
 * Duy: 30 %
 * Ha: 70 %
-
-* Our main goal for this week is to explore some interesting questions that we can answer from the data, and prepare the data to answer such questions.
 
 ## Week 2
 
@@ -54,8 +50,6 @@ description: "What makes a review funny/cool/useful?". We plan to do some text m
 #Work distribution:
 * Duy: 50 %
 * Ha: 50 %
-
-* Our main goal for this week is to explore some interesting questions that we can answer from the data, and prepare the data to answer such questions.
 
 ## Week 1
 
