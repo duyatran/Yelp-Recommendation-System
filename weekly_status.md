@@ -4,11 +4,11 @@ Each week, please spend 5-10 minutes writing a brief status report.  This does n
 
 *Copy the template below for each subsequent week.  Please put the most recent week at the **TOP** of the page.*
 
-## Week 5 (ongoing)
+## Week 5
 
 #Report for the week of 04/18/2017 to 04/24/2017.
 * After talking to Professor Hay, we decided to also look into well-known methods used by established recommender system, such as user-based and item-based collaborative filtering. The plan now is to implement our approach and a collaborative filtering approach, then compare the performance of the two.
-* Duy: I am tasked with looking into Crab, a prominent Python framework for collaborative filtering, and see if we can use it
+* Duy: I was tasked with looking into Crab, a prominent Python framework for collaborative filtering.The Crab project, however, has been abandoned, so I looked into alternatives. I wrote some test code to compare three frameworks Crab, LibRec, and Surprise (previously known as RecSys). I decide to pick Surprise because of the clean and easy-to-use API and its good variety of collaborative filtering (and other) algorithms.   
 * Ha: This week I will start working on our approach. Given a user_id, I will get the data ready for the subsequent machine learning step.
 * Drew: I will assume I have the data input from Ha's work, and so work on running ML algorithms (maybe with cross-validation) on input data.
 
