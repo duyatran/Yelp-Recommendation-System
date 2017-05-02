@@ -95,8 +95,7 @@ def testOnTestSet(clf,testData,testTarget):
             result.append(int(testMap[index]))
         else:
             fail += 1
-    print "correct rate is",(correct*1.0)/(correct+fail)*100,"%"
-    return result
+    return result,(correct*1.0)/(correct+fail)*100
 
 
 
@@ -104,19 +103,18 @@ def testOnTestSet(clf,testData,testTarget):
 if __name__ == "__main__":
     fileName = sys.argv[1]
     data,target = parseFile(fileName)
-    # data, target = parseFile("input.csv")
     trainData, trainTarget, testData, testTarget = getTrainAndTestSet(data,target)
     clf = decisionTree(trainData,trainTarget)
-    # linearRegression(trainData,trainTarget)
     clf2 = logisticRegression(trainData,trainTarget)
     # clf3 = linearRegression(trainData,trainTarget)
     clf4 = naiveBayes(trainData,trainTarget)
-    print clf4.score(testData, testTarget)
-    # print "for decision tree train", testOnTestSet(clf, trainData, trainTarget)
-    print "for decision tree", testOnTestSet(clf,testData,testTarget)
-    print "for logistic regression",testOnTestSet(clf2,testData,testTarget)
+    DTRecomList,DTCorrect = testOnTestSet(clf,testData,testTarget)
+    LRRecomList, LRCorrect = testOnTestSet(clf2, testData, testTarget)
+    NBRecomList, NBCorrect = testOnTestSet(clf4, testData, testTarget)
+    print "for decision tree the correct rate is ", DTCorrect
+    print "for logistic regression the correct rate is", LRCorrect
+    print "for naive bayes the correct rate is ", NBCorrect
     # print "for logistic regression train", testOnTestSet(clf2, trainData, trainTarget)
-    print "for naive bayes", testOnTestSet(clf4, testData, testTarget)
     # print "for naive bayes train", testOnTestSet(clf4, trainData, trainTarget)
     # print testMap
 
