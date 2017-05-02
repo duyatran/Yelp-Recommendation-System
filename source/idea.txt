@@ -1,0 +1,14 @@
+Yelp recommender system for users with reviews
+
+Given a user id, (maybe) a threshold rating:
+
+1. From the user's reviews, get the set of cities (Cities) & set of categories (Categories) the businesses the user reviewed are in
+
+2. Create a set of potential recommendations (Potentials) from Cities and Categories, i.e. businesses in Cities that has at least a category in Categories 
+
+3. From the user's reviews, train a model of user's preference:
+- Attributes: set of business.categories and business.attributes 
+- Target variable: whether the user likes the business or not (using the threshold rating, default=4) - LIKE or DISLIKE
+- Problem: is this dataset too small? Average review_count is only about 24.
+
+4. Run model (or classifier) on Potentials, return LIKE ones

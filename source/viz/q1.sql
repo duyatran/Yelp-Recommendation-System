@@ -1,3 +1,4 @@
+
 WITH city_business AS
                   (select distinct city, bus_name, day, hour, COUNT
                   FROM businesses, check_ins
