@@ -29,17 +29,14 @@ def get_item_based_input_all():
         f.write(str(record[-1]) + "\n")
     f.close()
 
-def get_item_based_train_test(user_id, test_bus_id_list, train_fname, test_fname):
+def get_item_based_train_test(user_bus_exclude_test, train_fname, test_fname):
     """
-    :param user_id: id of the user we are trying to recommend
-    :param test_bus_id_list: list of businesses that this user has reviewed, but we will exclude from training data,
-    so that we can test item_based after training. This list is the same as what is used to test in our original algorithm
+    :param user_bus_exclude_test: dictionary, keys: user_id, values: Counter of bus id used to test both models: item based
+    and original model
     :param train_fname: name of file to store training data
     :param test_fname: name of file to store test data
     :return:
     """
-    test_bus_id_cnt = Counter(test_bus_id_list) # convert from a list to a counter so that later on we can
-                    # do massive sorting data into train/test files more quickly
     try:
         cur.execute(item_based_command)
     except:
@@ -47,8 +44,10 @@ def get_item_based_train_test(user_id, test_bus_id_list, train_fname, test_fname
         exit(1, "Could not execute psql command")
     f_train = open(train_fname, 'w')
     f_test = open(test_fname, 'w')
-    for record in cur:
-        if (record[0] == user_id and test_bus_id_cnt[record[1]] > 0):
+    for record in cur: # record: user_id, bus_id, stars
+        user_id = record[0]
+        bus_id = record[1]
+        if ((user_id in user_bus_exclude_test) and (user_bus_exclude_test[user_id][bus_id] > 0)):
             # if the user_id and bus_id is in the test set, write data into test file
             for i in range(len(record) - 1):
                 f_test.write(str(record[i]) + ",")
