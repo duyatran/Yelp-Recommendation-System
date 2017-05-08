@@ -8,20 +8,25 @@ except:
     print "Could not connect to the database yelp"
 cur = conn.cursor()
 
-def get_more_1000_users():
-    get_user_more_1000_command = "with user_review_cnt as \
+def get_more_threshold_users(threshold, fname):
+    """
+    :param threshold: If users has number of reviews above this threshold, their user_id should be recorded into a file called fname
+    :param fname: the name of the file where idel user_id will be stored
+    :return:
+    """
+    get_user_more_threshold_command = "with user_review_cnt as \
     (select user_id , count(*) as review_count \
     FROM reviews \
     GROUP BY user_id) \
     SELECT user_id \
     FROM user_review_cnt \
-    WHERE review_count >= 1000;"
+    WHERE review_count >= " + str(threshold) + ";"
 
     try:
-        cur.execute(get_user_more_1000_command)
+        cur.execute(get_user_more_threshold_command)
     except:
-        print "There were problems executing the command " + get_user_more_1000_command
-    f = open(m.user_more_1000_fname, 'w')
+        print "There were problems executing the command " + get_user_more_threshold_command
+    f = open(fname, 'w')
     for record in cur:
         f.write(record[0] + "\n")
     f.close()

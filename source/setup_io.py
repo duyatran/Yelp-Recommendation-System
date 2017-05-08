@@ -6,7 +6,7 @@ def openFile(filename, mode):
 		return open(filename, mode)
 	except IOError:
 		print "Couldn't open '" + filename + "'!"
-		exit(1);
+		exit(1)
 
 # ensure the given directory exists
 def ensureDir(directory):
@@ -34,9 +34,15 @@ def toFlo(val):
 		exit(2)
 	return val
 
+
+
 def create_output_folders():
+    print "Creating folders if necessary...",
+    ensureDir(m.out_dir)
     ensureDir(m.out_dir)
     ensureDir(m.out_dir_original)
     ensureDir(m.out_dir_item_based)
     ensureDir(m.out_dir_potential)
-	ensureDir(m.out_dir_users)
+    ensureDir(m.out_dir_users)
+    ensureDir(m.out_dir_results)
+    print "Done"
