@@ -18,13 +18,14 @@ RANDOM_STATE = 0 # random seed
 
 testMap = []
 
+
 def parseFile(filename):
     dataset = np.loadtxt(filename, delimiter=",",skiprows=1)
     data = dataset[0:, 0:len(dataset[0]) - 1]#split data between attributes and like?
     target = dataset[0:, len(dataset[0]) - 1]
     return data,target
 
-def getTrainAndTestSet(data,target):
+def getTrainAndTestSet(data,target):#for my own test purpose, n
     global TEST_SIZE
     global RANDOM_STATE
     global testMap
@@ -97,7 +98,7 @@ def testOnTestSet(clf,testData,testTarget):
             # result.append(int(testMap[index]))
         else:
             fail += 1
-    return (correct*1.0)/(correct+fail)*100
+    return pred,(correct*1.0)/(correct+fail)*100
 
 def parsePotentials(filename):
     dataset = np.loadtxt(filename, delimiter=",",skiprows=1)
@@ -116,18 +117,32 @@ def run(user_fname):
     with open(user_fname, 'rb') as users:
         content = users.readlines()
         content = [x.strip() for x in content]
-        with open(m.out_dir_original + "/accuracy.csv", 'wt') as output:
+        with open(m.out_dir_results+"/accuracy.csv", 'wt') as output, open(m.out_dir_results+"/precision_recall.csv",'wt') as precOutput:
             writer = csv.writer(output, delimiter=',')
+            precWriter = csv.writer(precOutput,delimiter=',')
             writer.writerow(('username', 'Decision Tree', 'Logistic Regression', 'Naive Bayes'))
+            precWriter.writerow(('username','DT_precision','DT_recall','LR_precision','LR_recall','NB_precision','NB_recall'))
             for user in content:
                 trainData,trainTarget = parseFile(m.out_dir_original+"/att_cat_"+user+"_train.txt")
                 testData,testTarget = parseFile(m.out_dir_original+"/att_cat_"+user+"_test.txt")
                 clfDT = decisionTree(trainData,trainTarget)
                 clfLR = logisticRegression(trainData,trainTarget)
                 clfNB = naiveBayes(trainData,trainTarget)
-                DTAccur = testOnTestSet(clfDT,testData,testTarget)
-                LRfAccur = testOnTestSet(clfLR, testData, testTarget)
-                NBAccur = testOnTestSet(clfNB, testData, testTarget)
+                predDT,DTAccur = testOnTestSet(clfDT,testData,testTarget)
+                predLR,LRfAccur = testOnTestSet(clfLR, testData, testTarget)
+                predNB,NBAccur = testOnTestSet(clfNB, testData, testTarget)
+
+                DTprec = precision_score(predDT,testTarget)
+                LRprec = precision_score(predLR, testTarget)
+                NBprec = precision_score(predNB, testTarget)
+
+                DTrecall = recall_score(predDT, testTarget)
+                LRrecall = recall_score(predLR, testTarget)
+                NBrecall = recall_score(predNB, testTarget)
+
+                writer.writerow((user,DTAccur,LRfAccur,NBAccur))
+                precWriter.writerow((user,DTprec,DTrecall,LRprec,LRrecall,NBprec,NBrecall))
+
                 maxAccur = max(DTAccur,LRfAccur,NBAccur)
                 finalCLF = None
                 if DTAccur == maxAccur:
@@ -136,15 +151,14 @@ def run(user_fname):
                     finalCLF = clfLR
                 else:
                     finalCLF = clfNB
-                writer.writerow((user,DTAccur,LRfAccur,NBAccur))
-                with open(m.out_dir_results+"/result_"+user+".txt",'wt') as recomOutput:
-                    recomWriter = csv.writer(recomOutput, delimiter=',')
-                    dataset = np.loadtxt(m.out_dir_potential+"/pot_bus_"+user+".txt", delimiter=",", skiprows=1)
-                    data = dataset[0:, 1:len(dataset[0])]
-                    busNames = dataset[0:,0]
-                    result = getPotentialRecommendation(finalCLF,data,busNames)
-                    for bus in result:
-                        recomWriter.writerow((bus))
+                # with open(m.out_dir_results+"/result_"+user+".txt",'wt') as recomOutput:
+                #     recomWriter = csv.writer(recomOutput, delimiter=',')
+                #     dataset = np.loadtxt(m.out_dir_potential+"/pot_bus_"+user+".txt", delimiter=",", skiprows=1)
+                #     data = dataset[0:, 1:len(dataset[0])]
+                #     busNames = dataset[0:,0]
+                #     result = getPotentialRecommendation(finalCLF,data,busNames)
+                #     for bus in result:
+                #         recomWriter.writerow((bus))
 
 
 if __name__ == "__main__":
