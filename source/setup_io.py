@@ -43,10 +43,6 @@ def create_output_folders():
     ensureDir(m.out_dir_original)
     ensureDir(m.out_dir_item_based)
     ensureDir(m.out_dir_potential)
-<<<<<<< HEAD
-    ensureDir(m.out_dir_users)
-=======
     ensureDir(m.out_dir_users)
     ensureDir(m.out_dir_results)
     print "Done"
->>>>>>> 5ed87cdb9f932f73f87cc457c1d68f52be10f2fb

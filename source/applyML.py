@@ -108,7 +108,7 @@ def getPotentialRecommendation(clf,data,busName):
     result = []
     for index in xrange(len(data)):
         prediction = clf.predict(data[index].reshape(-1,len(data[index])))
-        if prediction = 1:
+        if prediction == 1:
             result.append(str(busName[index]))
     return result
 
@@ -136,9 +136,8 @@ def run(user_fname):
                     finalCLF = clfLR
                 else:
                     finalCLF = clfNB
-                print finalCLF
                 writer.writerow((user,DTAccur,LRfAccur,NBAccur))
-                with open(m.out_dir_original+"/result_"+user+".txt",'wt') as recomOutput:
+                with open(m.out_dir_results+"/result_"+user+".txt",'wt') as recomOutput:
                     recomWriter = csv.writer(recomOutput, delimiter=',')
                     dataset = np.loadtxt(m.out_dir_potential+"/pot_bus_"+user+".txt", delimiter=",", skiprows=1)
                     data = dataset[0:, 1:len(dataset[0])]
@@ -149,7 +148,7 @@ def run(user_fname):
 
 
 if __name__ == "__main__":
-    run("../output/users/users_limit_100.txt")
+    run("../output/users/users_more_1000.txt")
 
     # fileName = sys.argv[1]
     # data,target = parseFile(fileName)
