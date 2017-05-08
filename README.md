@@ -30,3 +30,6 @@ WARNING: this will take quite a long time (about 40 minutes on my laptop). I fin
 (Optional) If you prefer to deal with .csv files, you can convert the json files to csv files
         
         python json_to_csv_converter.py json_file_name
+
+Second, create ./output directory inside project directory
+Third, create ./output/check_in_time_by_cities directory inside output

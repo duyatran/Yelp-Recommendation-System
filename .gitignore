@@ -92,4 +92,5 @@ ENV/
 .json
 .csv
 .pdf
-source/yelp_data
+./yelp_data
+.txt

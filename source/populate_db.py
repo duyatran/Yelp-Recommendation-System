@@ -11,7 +11,7 @@ conn = psycopg2.connect("dbname=yelp user=vagrant")
 cur = conn.cursor()
 
 def populate_businesses():
-    with open('./yelp_data/yelp_academic_dataset_business.json') as f:
+    with open('../yelp_data/yelp_academic_dataset_business.json') as f:
         for line in f:
             line_content = json.loads(line)
             bus_id = line_content['business_id']
@@ -41,7 +41,7 @@ def extract_business_hours(time):
     return (day_int, dt.time(int(open_time_h), int(open_time_m)), dt.time(int(close_time_h), int(close_time_m)))
 
 def populate_business_hours():
-    with open('./yelp_data/yelp_academic_dataset_business.json') as f:
+    with open('../yelp_data/yelp_academic_dataset_business.json') as f:
         for line in f:
             line_content = json.loads(line)
             bus_id = line_content['business_id']
@@ -57,7 +57,7 @@ def extract_checkin_time(time):
     return (day_int, int(hour), int(count))
 
 def populate_checkin():
-    with open('./yelp_data/yelp_academic_dataset_checkin.json') as f:
+    with open('../yelp_data/yelp_academic_dataset_checkin.json') as f:
         for line in f:
             line_content = json.loads(line)
             bus_id = line_content['business_id']
@@ -66,7 +66,7 @@ def populate_checkin():
                 cur.execute("INSERT INTO check_ins (bus_id, day, hour, count) VALUES (%s, %s, %s, %s)", (bus_id, day, hour, count))
 
 def populate_users():
-    with open('./yelp_data/yelp_academic_dataset_user.json') as f:
+    with open('../yelp_data/yelp_academic_dataset_user.json') as f:
         for line in f:
             line_content = json.loads(line)
             user_id = line_content['user_id']
@@ -94,7 +94,7 @@ def populate_users():
             cur.execute("INSERT INTO users (user_id, name, review_count, yelp_since, friends, useful, funny, cool, fans, avg_stars, compliment_hot, compliment_more, compliment_profile, compliment_cute, compliment_list, compliment_note, compliment_plain, compliment_cool, compliment_funny, compliment_writer, compliment_photos) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (user_id, name, review_count, yelp_since, friends, useful, funny, cool, fans, avg_stars, compliment_hot, compliment_more, compliment_profile, compliment_cute, compliment_list, compliment_note, compliment_plain,compliment_cool, compliment_funny, compliment_writer, compliment_photos))
 
 def populate_elite_users():
-    with open('./yelp_data/yelp_academic_dataset_user.json') as f:
+    with open('../yelp_data/yelp_academic_dataset_user.json') as f:
         for line in f:
             line_content = json.loads(line)
             user_id = line_content['user_id']
@@ -103,7 +103,7 @@ def populate_elite_users():
                     cur.execute("INSERT INTO elite_users (user_id, year) VALUES (%s, %s)", (user_id, year))
 
 def populate_reviews():
-    with open('./yelp_data/yelp_academic_dataset_review.json') as f:
+    with open('../yelp_data/yelp_academic_dataset_review.json') as f:
         for line in f:
             line_content = json.loads(line)
             review_id = line_content['review_id']
@@ -111,24 +111,13 @@ def populate_reviews():
             bus_id = line_content['business_id']
             stars = float(line_content['stars'])
             review_date = datetime.strptime(line_content['date'], '%Y-%m-%d')
-            review_text = line_content['text']
+            #review_text = line_content['text']
             useful = int(line_content['useful'])
             funny = int(line_content['funny'])
             cool = int(line_content['cool'])
 
-            cur.execute("INSERT INTO reviews (review_id, user_id, bus_id, stars, review_date, review_text, useful, funny, cool) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (review_id, user_id, bus_id, stars, review_date, review_text, useful, funny, cool))
+            cur.execute("INSERT INTO reviews (review_id, user_id, bus_id, stars, review_date,  useful, funny, cool) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (review_id, user_id, bus_id, stars, review_date, useful, funny, cool))
 
-def populate_tips():
-    with open('./yelp_data/yelp_academic_dataset_tip.json') as f:
-        for line in f:
-            line_content = json.loads(line)
-            tip_text = line_content['text']
-            user_id = line_content['user_id']
-            bus_id = line_content['business_id']
-            tip_date = datetime.strptime(line_content['date'], '%Y-%m-%d')
-            likes = int(line_content['likes'])
-
-            cur.execute("INSERT INTO tips (tip_text, tip_date, likes, bus_id, user_id) VALUES (%s, %s, %s, %s, %s)", (tip_text, tip_date, likes, bus_id, user_id))
 
 # Tried creating a "friends" relation out of the user json file. It took forever, so keep friends as an array in users.
 # def populate_friends():
@@ -148,7 +137,6 @@ populate_business_hours()
 populate_users()
 populate_elite_users()
 populate_reviews()
-populate_tips()
 
 conn.commit()
 cur.close()

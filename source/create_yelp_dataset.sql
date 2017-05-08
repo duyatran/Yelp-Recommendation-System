@@ -1,13 +1,12 @@
 -- drop the tables if they already exist
 
---DROP TABLE IF EXISTS businesses CASCADE;
---DROP TABLE IF EXISTS business_hours CASCADE;
--- DROP TABLE IF EXISTS friends CASCADE;
---DROP TABLE IF EXISTS elite_users CASCADE;
---DROP TABLE IF EXISTS check_ins CASCADE;
---DROP TABLE IF EXISTS reviews CASCADE;
---DROP TABLE IF EXISTS tips CASCADE;
---DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS businesses CASCADE;
+DROP TABLE IF EXISTS business_hours CASCADE;
+DROP TABLE IF EXISTS friends CASCADE;
+DROP TABLE IF EXISTS elite_users CASCADE;
+DROP TABLE IF EXISTS check_ins CASCADE;
+DROP TABLE IF EXISTS reviews CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
 -- create the tables and views
 -- note: primary keys and foreign keys are specified at the end of this file
@@ -91,16 +90,9 @@ CREATE TABLE reviews (
     bus_id character varying(100) NOT NULL REFERENCES businesses,
     stars double precision,
     review_date date,
-    review_text text,
+    --review_text text,
     useful integer, -- number of useful votes received
     funny integer, -- number of funny votes received
     cool integer -- number of cool votes received
 );
 
-CREATE TABLE tips (
-  tip_text text,
-  tip_date date, -- format like 2009-12-19
-  likes int, -- like count
-  bus_id character varying(100) REFERENCES businesses,
-  user_id character varying(100) REFERENCES users
-);
