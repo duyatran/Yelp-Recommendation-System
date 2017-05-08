@@ -100,20 +100,29 @@ def testOnTestSet(clf,testData,testTarget):
             fail += 1
     return result,pred,(correct*1.0)/(correct+fail)*100
 
+def parsePotentials(filename):
+    dataset = np.loadtxt(filename, delimiter=",",skiprows=1)
+    data = dataset[0:, 0:len(dataset[0])]
+    return data
 
+def getPotentialRecommendation(clf,data):
+    pred = []
 
 
 if __name__ == "__main__":
     fileName = sys.argv[1]
     data,target = parseFile(fileName)
     trainData, trainTarget, testData, testTarget = getTrainAndTestSet(data,target)
+    #potentials = parsePotentials()
+
     clf = decisionTree(trainData,trainTarget)
     clf2 = logisticRegression(trainData,trainTarget)
-    # clf3 = linearRegression(trainData,trainTarget)
     clf4 = naiveBayes(trainData,trainTarget)
+
     DTRecomList,DTpred,DTCorrect = testOnTestSet(clf,testData,testTarget)
     LRRecomList,LRpred,LRCorrect = testOnTestSet(clf2, testData, testTarget)
     NBRecomList,NBpred,NBCorrect = testOnTestSet(clf4, testData, testTarget)
+
     print "recall for LR ",recall_score(LRpred,testTarget)
     print "precision for LR ",precision_score(LRpred,testTarget)
     print "for decision tree the correct rate is ", DTCorrect
