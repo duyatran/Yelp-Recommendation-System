@@ -22,8 +22,8 @@ def get_businesses(user_id):
     except:
         print "There were problems executing the command " + command
         exit(0, "PSQL Execution problem")
-    print "Done finding businesses that this user rated. Now finding their categories and attributes ..."
-    f = open(m.out_dir_original + "/restaurants_" + user_id + ".txt", 'w')
+    #print "Done finding businesses that this user rated. Now finding their categories and attributes ..."
+    f = open(m.out_dir_original + "/businesses_" + user_id + ".txt", 'w')
 
     for record in cur_businesses: # For each restaurant that this user goes to, get its attributes and
         get_attributes_command = "SELECT COALESCE (attributes, NULL) as attributes, COALESCE (categories, NULL) as categories\
@@ -44,8 +44,7 @@ def get_businesses(user_id):
             f.write("|" + str(record[0])) # write stars
             f.write("|" + str(record[1])) # write bus_id, so that we can extract information for Duy's item-based data
             f.write("\n")
-            #f.write(str(att_record [0]) + "|" + str(att_record[1]) + "\n")
-    print "Done writing raw attributes and categories ..."
+    #print "Done writing raw attributes and categories ..."
     f.close()
 
 def write_attribute_or_categories(f, att_or_cat):
@@ -111,7 +110,7 @@ def get_features_set_and_table(fname):
         businesses.append(bus_id)
         res_stars.append(float(rating_stars))
     f.close()
-    print "Done processing features and stars into binary form"
+    #print "Done processing features and stars into binary form"
     return res_features, list(features_set), res_stars, businesses # I changed from a set to a list to make the order of elements immutable
 
 def write_attributes_for_mc(fname, res_features, features_set, res_stars):
@@ -128,7 +127,7 @@ def write_attributes_for_mc(fname, res_features, features_set, res_stars):
             f.write(str(1) + "\n")
         else:
             f.write(str(0) + "\n")
-    print "Done writing attributes and ratings into binary form"
+    #print "Done writing attributes and ratings into binary form"
     f.close()
 
 def write_potential_recommendations(cities, user_id):
@@ -136,7 +135,7 @@ def write_potential_recommendations(cities, user_id):
     :param cities: A list of cities that the user has been to (has rated businesses in)
     :return: write into a file bus_ids of all businesses in that city
     """
-    print "Writing cities and potential businesses for recommendation "
+    #print "Writing cities and potential businesses for recommendation "
     f_city = open(m.out_dir_potential + "/cities_" + str(user_id) + ".txt", 'w')
     f_pot_bus = open(m.out_dir_potential + "/pot_bus_" + str(user_id) + ".txt", 'w')
     # For each city that the user has been to
@@ -158,7 +157,7 @@ def write_potential_recommendations(cities, user_id):
             f_pot_bus.write(str(record[0]) + "\n")
     f_pot_bus.close()
     f_city.close()
-    print "Done"
+    #print "Done"
 
 def get_cities (bus_id_list):
     """
@@ -189,7 +188,7 @@ def process_one_user_input(user_id, train_percent):
     """
     # 1. Open the files containing raw attributes of restaurants that this user (user_id) rated
     res_features, features_set, res_stars, businesses = \
-        get_features_set_and_table(m.out_dir_original + "/restaurants_" + user_id + ".txt")
+        get_features_set_and_table(m.out_dir_original + "/businesses_" + user_id + ".txt")
 
     # 2. Get the index to separate train and test data
     train_index_stop = int(float(len(res_features)) * float(train_percent) / float(100))
@@ -197,22 +196,22 @@ def process_one_user_input(user_id, train_percent):
     write_attributes_for_mc(m.out_dir_original + "/att_cat_" + user_id + "_train.txt", \
                             res_features[:train_index_stop], features_set, \
                             res_stars[:train_index_stop])
-    print "Done writing train data for our original methods"
+    #print "Done writing train data for our original methods"
     write_attributes_for_mc(m.out_dir_original + "/att_cat_" + user_id + "_test.txt", \
                                   res_features[train_index_stop:], features_set, \
                                   res_stars[train_index_stop:])
-    print "Done writing train data for our original methods"
+    #print "Done writing test data for our original methods"
     test_bus = businesses[train_index_stop:]
     # Given the user ide and businesses id used to test, write data to train and test item_baed model
     item_based.get_item_based_train_test(user_id, test_bus, \
-                                         m.out_dir_item_based + '/trainData.txt', \
-                                         m.out_dir_item_based + '/testData.txt')
+                                         m.out_dir_item_based + '/' + user_id + '_trainData.txt', \
+                                         m.out_dir_item_based + '/' + user_id + '_testData.txt')
 
     # 4. Given the list of businesses that the users went to, find cities that the user has been to
     cities = get_cities(businesses)
     # 5. Write the cities the user has been to, adn all the businesses in those cities into file
     write_potential_recommendations(cities, user_id)
-    print "Done writing train and test data for item_based method"
+    #print "Done writing train and test data for item_based method"
 
 
 def process_all_user_input(user_fname, train_percent):
@@ -224,7 +223,11 @@ def process_all_user_input(user_fname, train_percent):
     :return:
     """
     f = open(user_fname, 'r')
+    index = 0
     for line in f:
         user_id = line.strip()
+        get_businesses(user_id)
         process_one_user_input(user_id, train_percent)
+        print "Done with user " + str(index)
+        index += 1
     f.close()
