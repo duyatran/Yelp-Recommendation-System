@@ -57,7 +57,6 @@ def getTrainAndTestSet(data,target):
         #     index += 1
         #     testWriter.writerow((temp))
 
-
     return trainData,trainTarget,testData,testTarget
 
 def decisionTree(trainData,trainTarget):
