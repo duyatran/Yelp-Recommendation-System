@@ -117,7 +117,7 @@ def run(user_fname):
     with open(user_fname, 'rb') as users:
         content = users.readlines()
         content = [x.strip() for x in content]
-        with open(m.out_dir_results+"/accuracy.csv", 'wt') as output, open(m.out_dir_results+"/precision_recall.csv",'wt') as precOutput:
+        with open(m.out_dir_results+"/original_accuracy.csv", 'wt') as output, open(m.out_dir_results+"/original_precision_recall.csv",'wt') as precOutput:
             writer = csv.writer(output, delimiter=',')
             precWriter = csv.writer(precOutput,delimiter=',')
             writer.writerow(('username', 'Decision Tree', 'Logistic Regression', 'Naive Bayes'))
