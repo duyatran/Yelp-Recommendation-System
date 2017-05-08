@@ -39,4 +39,4 @@ def create_output_folders():
     ensureDir(m.out_dir_original)
     ensureDir(m.out_dir_item_based)
     ensureDir(m.out_dir_potential)
-	ensureDir(m.out_dir_users)
+    ensureDir(m.out_dir_users)
