@@ -118,6 +118,20 @@ def get_attributes(attributes):
                 results.append(processed_att)
     return results
 
+def process_categories(categories):
+    split_categories = (categories.split("$"))
+    if len(split_categories) == 0:
+        return []
+    else:
+        split_categories = split_categories[:-1]# Get rid of the last category,
+        # because due to the way we user "$", the last categories after splitting is blank
+    results = []
+    for i, cat in enumerate(split_categories):
+        striped_cat = cat.strip()
+        if (striped_cat != "" and striped_cat != None):
+            results.append(striped_cat)
+    return results
+
 def get_features_set_and_table(fname):
     """
     :param fname: Name of the file where raw data of attributes and categories taken from sql are taken
@@ -138,7 +152,9 @@ def get_features_set_and_table(fname):
         rating_stars = att_cat[2]
         bus_id = (att_cat[3]).strip()
         features = get_attributes(attributes)
-        features.extend((categories.split("$"))[:-1]) # Get rid of the last category, because due to the way we user "$", the last categories after splitting is blank
+        processed_cat = process_categories(categories)
+        if len(processed_cat) > 0:
+            features.extend(processed_cat)
         res_features.append(features) # res_features is 2D table, [restaurant_index][attribute_index]
         features_set.update(features)
         businesses.append(bus_id)
