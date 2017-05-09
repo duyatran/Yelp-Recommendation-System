@@ -294,16 +294,14 @@ def process_one_user_input(user_id, train_percent, star_threshold = m.default_st
                                   res_features[train_index_stop:], features_set, \
                                   res_stars[train_index_stop:], star_threshold)
     #print "Done writing test data for our original methods"
-    test_bus = businesses[train_index_stop:]
-    # Given the user ide and businesses id used to test, write data to train and test item_baed model
-    item_based.get_item_based_train_test(user_id, test_bus, \
-                                         m.out_dir_item_based + '/' + user_id + '_trainData.txt', \
-                                         m.out_dir_item_based + '/' + user_id + '_testData.txt')
-
+    item_based_bus_exclude = businesses[train_index_stop:]
+    # need to exclude this list of businesses from data in item-based, because it is used for testing
     # 4. Given the list of businesses that the users went to, find cities that the user has been to
     cities = get_cities(businesses)
     # 5. Write the cities the user has been to, adn all the businesses in those cities into file
     create_potentials_one_user(features_set, cities, user_id)
+
+    return item_based_bus_exclude
     #print "Done writing train and test data for item_based method"
 
 def create_potentials_one_user(pot_features_set, cities, user_id):
@@ -328,12 +326,21 @@ def process_all_user_input(user_fname, train_percent, star_threshold = m.default
     be used to train the models
     :return:
     """
+    user_bus_ib_test_dict = {} # dictionary keys: userid, values: counter of bus id that are used to test both models
+    # (item based and original), we need this to find item-based training data and testing data
     f = open(user_fname, 'r')
     index = 0
     for line in f:
         user_id = line.strip()
         get_businesses(user_id)
-        process_one_user_input(user_id, train_percent, star_threshold)
+
+        bus_ib_exclude = process_one_user_input(user_id, train_percent, star_threshold)
+        user_bus_ib_test_dict[user_id] = Counter(bus_ib_exclude)
         print "Done with user " + str(index)
         index += 1
+    item_based_train_fname = m.out_dir_item_based + "/train.txt"
+    item_based_test_fname = m.out_dir_item_based + "/test.txt"
+    item_based.get_item_based_train_test(user_bus_ib_test_dict,\
+                                         item_based_train_fname,\
+                                         item_based_test_fname)
     f.close()

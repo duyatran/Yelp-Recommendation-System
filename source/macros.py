@@ -7,7 +7,7 @@ out_dir_results = "../output/results"
 item_based_fname = out_dir_item_based + "/all_input.txt"
 user_more_thres_fname = out_dir_users + "/users_more_"
 user_limit = out_dir_users + "/users_limit_" # Have to add the limit threshold and txt afterward
-
+default_star_threshold = 4.0
 def get_user_more_thres_fname(threshold):
     """
 
