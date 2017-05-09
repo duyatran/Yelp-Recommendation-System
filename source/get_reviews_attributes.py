@@ -114,7 +114,7 @@ def get_attributes(attributes):
                     results.append(att_name + "_" + processed_att)
         else:
             processed_att = process_sub_attribute(a)
-            if processed_att != None:
+            if (processed_att != None) and (processed_att != ""):
                 results.append(processed_att)
     return results
 

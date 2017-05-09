@@ -37,12 +37,14 @@ def toFlo(val):
 
 
 def create_output_folders():
-    print "Creating folders if necessary...",
-    ensureDir(m.out_dir)
-    ensureDir(m.out_dir)
-    ensureDir(m.out_dir_original)
-    ensureDir(m.out_dir_item_based)
-    ensureDir(m.out_dir_potential)
-    ensureDir(m.out_dir_users)
-    ensureDir(m.out_dir_results)
-    print "Done"
+	print "Creating folders if necessary...",
+	ensureDir(m.out_dir)
+	ensureDir(m.out_dir_original)
+	ensureDir(m.out_dir_item_based)
+	ensureDir(m.out_dir_potential)
+	ensureDir(m.out_dir_users)
+	ensureDir(m.out_dir_results)
+	ensureDir(m.out_dir_friends_ratings)
+	ensureDir(m.out_dir_check_ins)
+	ensureDir(m.out_dir_res_loc)
+	print "Done"
