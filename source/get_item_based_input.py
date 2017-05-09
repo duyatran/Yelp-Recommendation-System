@@ -50,7 +50,8 @@ def get_item_based_train_test(user_bus_exclude_test, train_fname, test_fname):
         user_id = record[0]
         bus_id = record[1]
         if (user_id != current_user): # If we found a new user, we have to create a new test file
-             f_test = open(test_fname + user_id + ".txt", 'w')
+            f_test = open(test_fname + user_id + ".txt", 'w')
+            current_user = user_id
         if ((user_id in user_bus_exclude_test) and (user_bus_exclude_test[user_id][bus_id] > 0)):
             # if the user_id and bus_id is in the test set, write data into test file
             for i in range(len(record) - 1):
