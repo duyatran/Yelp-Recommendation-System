@@ -24,11 +24,15 @@ def get_item_based_input_all():
         print "There were problems executing the command " + item_based_command
         exit(1, "Could not execute psql command")
     f = open(m.item_based_fname, 'w')
+    write_header(f)
     for record in cur:
         for i in range(len(record) - 1):
             f.write(str(record[i]) + ",")
         f.write(str(record[-1]) + "\n")
     f.close()
+
+def write_header(f):
+    f.write("user_id,bus_id,rating" + "\n")
 
 def get_item_based_train_test(user_bus_exclude_test, train_fname, test_fname):
     """
@@ -45,6 +49,7 @@ def get_item_based_train_test(user_bus_exclude_test, train_fname, test_fname):
         print "There were problems executing the command " + item_based_command
         exit(1, "Could not execute psql command")
     f_train = open(train_fname, 'w')
+    write_header(f_train)
     f_test = None
     current_user = ""
     for record in cur: # record: user_id, bus_id, stars
@@ -54,6 +59,7 @@ def get_item_based_train_test(user_bus_exclude_test, train_fname, test_fname):
             if (f_test != None):
                 f_test.close()
             f_test = open(test_fname + user_id + ".txt", 'w')
+            write_header(f_test)
             current_user = user_id
 
         if ((user_id in user_bus_exclude_test) and (user_bus_exclude_test[user_id][bus_id] > 0)):

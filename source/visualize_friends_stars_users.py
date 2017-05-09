@@ -1,6 +1,6 @@
 import psycopg2
 import matplotlib.pyplot as plt
-plt.switch_backend('agg')
+#plt.switch_backend('agg')
 
 out_dir = "../output/friends_ratings_users"
 try:
@@ -24,15 +24,14 @@ def get_friends_ratings_friends():
     for record in cur:
         num_friends.append(record[0])
         ratings.append(record[1])
-    print "After obtaining data of users' number of friends and ratings"
-    plt.figure(figsize=(8, 6))
-    plt.plot(num_friends, ratings, 'o', alpha = 0.1)
-    print "After plotting"
-    plt.ylabel("Ratings")
-    plt.xlabel("Number of friends")
-    plt.title("Distributions of users' number of friends and ratings")
-    print "After notating"
-    plt.show()
-    print "Done ..."
+    return num_friends, ratings
+    # print "After obtaining data of users' number of friends and ratings"
+    # plt.figure(figsize=(8, 6))
+    # plt.plot(num_friends, ratings, 'o', alpha = 0.1)
+    # plt.ylabel("Ratings")
+    # plt.xlabel("Number of friends")
+    # plt.title("Distributions of users' number of friends and ratings")
+    # plt.show()
+    # print "Done ..."
 
 
