@@ -323,6 +323,7 @@ def process_one_user_input(user_id, train_percent, star_threshold = m.default_st
     cities = get_cities(businesses)
     # 5. Write the cities the user has been to, adn all the businesses in those cities into file
     create_potentials_one_user(features_set, cities, user_id)
+
     return item_based_bus_exclude
     #print "Done writing train and test data for item_based method"
 
@@ -355,6 +356,7 @@ def process_all_user_input(user_fname, train_percent, star_threshold = m.default
     for line in f:
         user_id = line.strip()
         get_businesses(user_id)
+
         bus_ib_exclude = process_one_user_input(user_id, train_percent, star_threshold)
         user_bus_ib_test_dict[user_id] = Counter(bus_ib_exclude)
         print "Done with user " + str(index)
