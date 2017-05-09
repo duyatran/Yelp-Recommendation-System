@@ -114,7 +114,7 @@ def get_attributes(attributes):
                     results.append(att_name + "_" + processed_att)
         else:
             processed_att = process_sub_attribute(a)
-            if processed_att != None:
+            if (processed_att != None) and (processed_att != ""):
                 results.append(processed_att)
     return results
 
@@ -337,7 +337,7 @@ def process_all_user_input(user_fname, train_percent, star_threshold = m.default
         print "Done with user " + str(index)
         index += 1
     item_based_train_fname = m.out_dir_item_based + "/train.txt"
-    item_based_test_fname = m.out_dir_item_based + "/test.txt"
+    item_based_test_fname = m.out_dir_item_based + "/test_"
     item_based.get_item_based_train_test(user_bus_ib_test_dict,\
                                          item_based_train_fname,\
                                          item_based_test_fname)

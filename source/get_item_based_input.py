@@ -3,7 +3,8 @@ from collections import Counter
 import macros as m
 # get_user_id_command is psql command used to get users id that have more than 1000 reivew on yelp
 item_based_command = "Select user_id, bus_id, stars \
-                      from reviews;"
+                      from reviews \
+                      ORDER by user_id;"
 
 try:
     conn = psycopg2.connect("dbname=yelp user=vagrant")
@@ -43,10 +44,14 @@ def get_item_based_train_test(user_bus_exclude_test, train_fname, test_fname):
         print "There were problems executing the command " + item_based_command
         exit(1, "Could not execute psql command")
     f_train = open(train_fname, 'w')
-    f_test = open(test_fname, 'w')
+    f_test = None
+    current_user = ""
     for record in cur: # record: user_id, bus_id, stars
         user_id = record[0]
         bus_id = record[1]
+        if (user_id != current_user): # If we found a new user, we have to create a new test file
+            f_test = open(test_fname + user_id + ".txt", 'w')
+            current_user = user_id
         if ((user_id in user_bus_exclude_test) and (user_bus_exclude_test[user_id][bus_id] > 0)):
             # if the user_id and bus_id is in the test set, write data into test file
             for i in range(len(record) - 1):
