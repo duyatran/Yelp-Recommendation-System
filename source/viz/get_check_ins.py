@@ -1,13 +1,13 @@
 import psycopg2
 
-NUM_CITIES = 878
+NUM_CITIES = 10
 ### get the 10000 bus_id, num_check_ins that have the highgest num check ins
 get_highest_check_ins = "SELECT bus_id, count(*) as num_check_ins\
                         FROM check_ins \
-                        GROUP BY bus_id\
-                        ORDER BY num_check_ins\
-                        DESC\
-                        limit 10000;"
+                        GROUP BY bus_id \
+                        ORDER BY num_check_ins \
+                        DESC \
+                        limit" + str(NUM_CITIES) + " ;"
 try:
     conn = psycopg2.connect("dbname=yelp user=vagrant")
 except:
