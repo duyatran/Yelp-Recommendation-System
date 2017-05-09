@@ -22,13 +22,16 @@ def get_item_based_input_all():
         cur.execute(item_based_command)
     except:
         print "There were problems executing the command " + item_based_command
-        exit(1, "Could not execute psql command")
     f = open(m.item_based_fname, 'w')
+    write_header(f)
     for record in cur:
         for i in range(len(record) - 1):
             f.write(str(record[i]) + ",")
         f.write(str(record[-1]) + "\n")
     f.close()
+
+def write_header(f):
+    f.write("user_id,bus_id,rating" + "\n")
 
 def get_item_based_train_test(user_bus_exclude_test, train_fname, test_fname):
     """
@@ -38,20 +41,25 @@ def get_item_based_train_test(user_bus_exclude_test, train_fname, test_fname):
     :param test_fname: name of file to store test data
     :return:
     """
+    print "Extracting training and testing data for item-based algorithm",
     try:
         cur.execute(item_based_command)
     except:
         print "There were problems executing the command " + item_based_command
-        exit(1, "Could not execute psql command")
     f_train = open(train_fname, 'w')
+    write_header(f_train)
     f_test = None
     current_user = ""
     for record in cur: # record: user_id, bus_id, stars
         user_id = record[0]
         bus_id = record[1]
-        if (user_id != current_user): # If we found a new user, we have to create a new test file
+        if ((user_id != current_user) and (user_id in user_bus_exclude_test)):
+            if (f_test != None):
+                f_test.close()
             f_test = open(test_fname + user_id + ".txt", 'w')
+            write_header(f_test)
             current_user = user_id
+
         if ((user_id in user_bus_exclude_test) and (user_bus_exclude_test[user_id][bus_id] > 0)):
             # if the user_id and bus_id is in the test set, write data into test file
             for i in range(len(record) - 1):
@@ -62,6 +70,7 @@ def get_item_based_train_test(user_bus_exclude_test, train_fname, test_fname):
             for i in range(len(record) - 1):
                 f_train.write(str(record[i]) + ",")
             f_train.write(str(record[-1]) + "\n")
+    print "Done.. "
     f_train.close()
     f_test.close()
 

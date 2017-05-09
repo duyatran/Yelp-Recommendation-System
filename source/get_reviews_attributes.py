@@ -5,6 +5,7 @@ import numpy
 from collections import Counter
 import macros as m
 import get_item_based_input as item_based
+import string
 try:
     conn = psycopg2.connect("dbname=yelp user=vagrant")
 except:
@@ -26,7 +27,7 @@ def get_businesses(user_id):
         cur_businesses.execute(command)
     except:
         print "There were problems executing the command " + command
-        exit(0, "PSQL Execution problem")
+
     #print "Done finding businesses that this user rated. Now finding their categories and attributes ..."
     f = open(m.out_dir_original + "/businesses_" + user_id + ".txt", 'w')
 
@@ -38,7 +39,6 @@ def get_businesses(user_id):
             cur_attributes.execute(get_attributes_command)
         except:
             print "There were problems executing the command " + get_attributes_command
-            exit(0, "PSQL Execution problem")
 
         for i, att_record in enumerate(cur_attributes):
             attributes = att_record[0]
@@ -234,6 +234,14 @@ def get_potential_recommendations(fname):
     #print "Done processing features and stars into binary form"
     return res_features, businesses # I changed from a set to a list to make the order of elements immutable
 
+def process_city_name(city):
+    """
+    :param city: the city name taken from the psql
+    :return: Some cities has ' in it, ex: L'Espoir, When we run psql to find businesses in the city,
+    we have to turn any "\'" with "\'\'" so that psql would not crash because of the quotation mark problem
+    """
+    return string.replace(city, "\'", "\'\'")
+
 def write_raw_potential_recommendations(cities, fname):
     """
     :param cities: A list of cities that the user has been to (has rated businesses in)
@@ -245,6 +253,7 @@ def write_raw_potential_recommendations(cities, fname):
     #print "Writing raw data of cities and potential businesses for recommendation "
     # For each city that the user has been to
     for i, city in enumerate(cities):
+        city = process_city_name(city)
         # Query to get all bus_ids of businesses in that city
         command = "SELECT bus_id, \
 				  COALESCE (attributes, NULL) as attributes, COALESCE (categories, NULL) as categories \
@@ -255,7 +264,6 @@ def write_raw_potential_recommendations(cities, fname):
             cur_cities.execute(command)
         except:
             print "There were problems executing the command " + command
-            exit(0, "PSQL Execution problem")
         # Write all businesses, their attributes and categories into file businesses
         for i, att_record in enumerate(cur_cities):
             attributes = att_record[1]
@@ -282,7 +290,6 @@ def get_cities (bus_id_list):
             cur_cities.execute(command)
         except:
             print "There were problems executing the command " + command
-            exit(0, "PSQL Execution problem")
         for record in cur_cities:
             cities.add(record[0])
     return list(cities)
@@ -316,6 +323,7 @@ def process_one_user_input(user_id, train_percent, star_threshold = m.default_st
     cities = get_cities(businesses)
     # 5. Write the cities the user has been to, adn all the businesses in those cities into file
     create_potentials_one_user(features_set, cities, user_id)
+
     return item_based_bus_exclude
     #print "Done writing train and test data for item_based method"
 
@@ -348,6 +356,7 @@ def process_all_user_input(user_fname, train_percent, star_threshold = m.default
     for line in f:
         user_id = line.strip()
         get_businesses(user_id)
+
         bus_ib_exclude = process_one_user_input(user_id, train_percent, star_threshold)
         user_bus_ib_test_dict[user_id] = Counter(bus_ib_exclude)
         print "Done with user " + str(index)
