@@ -47,4 +47,5 @@ def create_output_folders():
 	ensureDir(m.out_dir_friends_ratings)
 	ensureDir(m.out_dir_check_ins)
 	ensureDir(m.out_dir_res_loc)
+	ensureDir(m.out_dir_rating_dis)
 	print "Done"
