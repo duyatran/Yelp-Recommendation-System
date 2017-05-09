@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import time
 import sklearn
 from sklearn import tree
 from sklearn.linear_model import LinearRegression
@@ -11,6 +12,7 @@ from sklearn.metrics import recall_score
 import csv
 import sys
 import macros as m
+from numpy import array
 
 
 TEST_SIZE = 0.3 # 30% of the input will be used as the testSet
@@ -128,6 +130,7 @@ def run(user_fname):
                 clfDT = decisionTree(trainData,trainTarget)
                 clfLR = logisticRegression(trainData,trainTarget)
                 clfNB = naiveBayes(trainData,trainTarget)
+                print "finished running models for the user ()"+user
                 predDT,DTAccur = testOnTestSet(clfDT,testData,testTarget)
                 predLR,LRfAccur = testOnTestSet(clfLR, testData, testTarget)
                 predNB,NBAccur = testOnTestSet(clfNB, testData, testTarget)
@@ -142,7 +145,7 @@ def run(user_fname):
 
                 writer.writerow((user,DTAccur,LRfAccur,NBAccur))
                 precWriter.writerow((user,DTprec,DTrecall,LRprec,LRrecall,NBprec,NBrecall))
-
+                print "finished writing "+user+" into accuracy and precision_recall files"
                 maxAccur = max(DTAccur,LRfAccur,NBAccur)
                 finalCLF = None
                 if DTAccur == maxAccur:
@@ -151,14 +154,25 @@ def run(user_fname):
                     finalCLF = clfLR
                 else:
                     finalCLF = clfNB
-                # with open(m.out_dir_results+"/result_"+user+".txt",'wt') as recomOutput:
-                #     recomWriter = csv.writer(recomOutput, delimiter=',')
-                #     dataset = np.loadtxt(m.out_dir_potential+"/pot_bus_"+user+".txt", delimiter=",", skiprows=1)
-                #     data = dataset[0:, 1:len(dataset[0])]
-                #     busNames = dataset[0:,0]
-                #     result = getPotentialRecommendation(finalCLF,data,busNames)
-                #     for bus in result:
-                #         recomWriter.writerow((bus))
+                with open(m.out_dir_results+"/original_result_"+user+".txt",'wt') as recomOutput, open(m.out_dir_potential+"/pot_bus_"+user+".txt",'rd') as potentials:
+                    recomWriter = csv.DictWriter(recomOutput, ['bus_id'])
+                    recomWriter.writeheader()
+                    potentialReader = csv.reader(potentials, delimiter=',')
+                    potentialReader.next()
+                    for row in potentialReader:
+                        # prediction = finalCLF.predict(row[1:].reshape(-1,len(row[1:])))
+                        data = [int() for x in row[1:]]
+                        npData = array(data)
+                        prediction = finalCLF.predict(npData.reshape(-1,len(npData)))
+                        if prediction == 1:
+                            recomWriter.writerow({'bus_id':str(row[0])})
+                    # dataset = np.genfromtxt(m.out_dir_potential+"/pot_bus_"+user+".txt", delimiter=",")
+                    # data = dataset[1:, 1:len(dataset[0])]
+                    # busNames = dataset[1:,0]
+                    # result = getPotentialRecommendation(finalCLF,data,busNames)
+                    # for bus in result:
+                    #     recomWriter.writerow((bus))
+                print "finished writing "+user+"\'s recommendation list"
 
 
 if __name__ == "__main__":
