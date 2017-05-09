@@ -5,6 +5,7 @@ import numpy
 from collections import Counter
 import macros as m
 import get_item_based_input as item_based
+import string
 try:
     conn = psycopg2.connect("dbname=yelp user=vagrant")
 except:
@@ -233,6 +234,14 @@ def get_potential_recommendations(fname):
     #print "Done processing features and stars into binary form"
     return res_features, businesses # I changed from a set to a list to make the order of elements immutable
 
+def process_city_name(city):
+    """
+    :param city: the city name taken from the psql
+    :return: Some cities has ' in it, ex: L'Espoir, When we run psql to find businesses in the city,
+    we have to turn any "\'" with "\'\'" so that psql would not crash because of the quotation mark problem
+    """
+    return string.replace(city, "\'", "\'\'")
+
 def write_raw_potential_recommendations(cities, fname):
     """
     :param cities: A list of cities that the user has been to (has rated businesses in)
@@ -244,6 +253,7 @@ def write_raw_potential_recommendations(cities, fname):
     #print "Writing raw data of cities and potential businesses for recommendation "
     # For each city that the user has been to
     for i, city in enumerate(cities):
+        city = process_city_name(city)
         # Query to get all bus_ids of businesses in that city
         command = "SELECT bus_id, \
 				  COALESCE (attributes, NULL) as attributes, COALESCE (categories, NULL) as categories \
