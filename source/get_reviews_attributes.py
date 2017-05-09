@@ -26,7 +26,7 @@ def get_businesses(user_id):
         cur_businesses.execute(command)
     except:
         print "There were problems executing the command " + command
-        exit(0, "PSQL Execution problem")
+
     #print "Done finding businesses that this user rated. Now finding their categories and attributes ..."
     f = open(m.out_dir_original + "/businesses_" + user_id + ".txt", 'w')
 
@@ -38,7 +38,6 @@ def get_businesses(user_id):
             cur_attributes.execute(get_attributes_command)
         except:
             print "There were problems executing the command " + get_attributes_command
-            exit(0, "PSQL Execution problem")
 
         for i, att_record in enumerate(cur_attributes):
             attributes = att_record[0]
@@ -255,7 +254,6 @@ def write_raw_potential_recommendations(cities, fname):
             cur_cities.execute(command)
         except:
             print "There were problems executing the command " + command
-            exit(0, "PSQL Execution problem")
         # Write all businesses, their attributes and categories into file businesses
         for i, att_record in enumerate(cur_cities):
             attributes = att_record[1]
@@ -282,7 +280,6 @@ def get_cities (bus_id_list):
             cur_cities.execute(command)
         except:
             print "There were problems executing the command " + command
-            exit(0, "PSQL Execution problem")
         for record in cur_cities:
             cities.add(record[0])
     return list(cities)

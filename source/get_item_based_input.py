@@ -22,7 +22,6 @@ def get_item_based_input_all():
         cur.execute(item_based_command)
     except:
         print "There were problems executing the command " + item_based_command
-        exit(1, "Could not execute psql command")
     f = open(m.item_based_fname, 'w')
     write_header(f)
     for record in cur:
@@ -47,7 +46,6 @@ def get_item_based_train_test(user_bus_exclude_test, train_fname, test_fname):
         cur.execute(item_based_command)
     except:
         print "There were problems executing the command " + item_based_command
-        exit(1, "Could not execute psql command")
     f_train = open(train_fname, 'w')
     write_header(f_train)
     f_test = None

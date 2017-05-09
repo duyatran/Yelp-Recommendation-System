@@ -17,7 +17,6 @@ def get_star_distribution():
         cur.execute(command)
     except:
         print "There were problems executing the command " + command
-        exit(0, "PSQL Execution problem")
     print "Done executing the command to find users' number of friends and ratings"
     stars = []
     num_stars = []
