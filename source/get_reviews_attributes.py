@@ -248,7 +248,7 @@ def write_raw_potential_recommendations(cities, fname):
         command = "SELECT bus_id, \
 				  COALESCE (attributes, NULL) as attributes, COALESCE (categories, NULL) as categories \
                   FROM businesses \
-                  WHERE  city = \"" + str(city) + "\";"
+                  WHERE  city = \'" + str(city) + "\';"
         # Execute command
         try:
             cur_cities.execute(command)
