@@ -116,7 +116,7 @@ def draw_restaurants_loc_ratings_by_city(city_fname, avg_star):
     save_fname = out_dir + city_fname + "_res_loc_ratings.png"
 
     # open figure
-    fig = plt.figure(figsize=(5,3), dpi = 300)
+    fig = plt.figure(figsize=(8,6), dpi = 300)
     ax = fig.add_subplot(111)
     # declare lists of x-coordinates and y-coordinates for the dark dots (above_average stars) and the light dots (below_average stars)
     above_avg_x = [] # latitude
@@ -144,7 +144,13 @@ def draw_restaurants_loc_ratings_by_city(city_fname, avg_star):
     fig.subplots_adjust(left = 0.05, bottom = 0.05, right = 0.95, top = 0.95)
     fig.savefig(save_fname, format='png', dpi = 300)
 
-def plot_res_loc_ratings_by_city():
+def plot_res_loc_ratings_by_city(raw_cities, cities_fnames):
+    """
+    raw_cities: list of raw name of cities as it appears in database
+    cities_fnames: list of name of cities as it should appear in any output file name
+    :return: Generate plots of restaurants location and high/low ratings in  a city
+    """
+    # Here we just generate analysis for the most frequently checked in cities
     for city in cities_fnames:
         avg_star = calculate_city_stars(city)
         draw_restaurants_loc_ratings_by_city(city, avg_star)
