@@ -1,35 +1,20 @@
 # COSC 480 DS Project
-First, create a folder named "yelp_data" in the folder "source"
+- First, download the Yelp data from https://www.yelp.com/dataset_challenge/dataset. You will find a compressed file in your Downloads folder. Uncompress it (tar xvzf yelp_dataset_challenge_round9.tar), name the folder 'yelp_data', and move it into the directory of this project (It has to be in the same level as the source folder, i.e. not inside the source folder).
 
-        cd source
-        mkdir yelp_data
-        cd yelp_data
-
-Download the dataset [here](https://www.yelp.com/dataset_challenge/dataset) into yelp_data.
-
-Decompress the dataset file, the result will be several json files (and some pdfs)
-        
-        tar xvzf yelp_dataset_challenge_round9.tar
-
-Install dependencies
-        
+- Second, install dependency for this project: 
         pip install psycopg2 
         pip install simplejson
 
-Create the database
-        
+- Third, navigate into source folder and create the Yelp dataset by running create_yelp_dataset.sql: 
         createdb yelp
-
-In the "source" folder, create the database's schema and populate it with data.
-
-WARNING: this will take quite a long time (about 40 minutes on my laptop). I finished my philosophy class reading while waiting for it.
-        
         psql yelp -f create_yelp_dataset.sql
+        
+  The schema of this database are can be viewed create_yelp_dataset.sql. We made some modifications to the general structure of database given from Yelp. Most arrays are pulled out to create new tables to take advantage of indexing.
+  
+  Populate the database with data. WARNING: The time it takes to import data from json files to local database is 40 mins-60 mins: 
         python populate_db.py
 
-(Optional) If you prefer to deal with .csv files, you can convert the json files to csv files
-        
-        python json_to_csv_converter.py json_file_name
+- Next, register for a license of GraphLab at https://turi.com/download/academic.html and install GraphLab (more info [here](https://turi.com/download/install-graphlab-create-command-line.html)):
+        pip install --upgrade --no-cache-dir https://get.graphlab.com/GraphLab-Create/2.1/your-registered-email-address-here/your-product-key-here/GraphLab-Create-License.tar.gz
 
-Second, create ./output directory inside project directory
-Third, create ./output/check_in_time_by_cities directory inside output
+- Change Vagrantfile setting, line 54 to `v.memory = 4096` to give the VM 4 GB of RAM (you can allocate more for faster results, if your machine has RAM to spare). This is necessary for GraphLab to run at all.
