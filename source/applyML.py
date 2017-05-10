@@ -122,8 +122,9 @@ def run(user_fname):
         with open(m.out_dir_results+"/original_accuracy.csv", 'wt') as output, open(m.out_dir_results+"/original_precision_recall.csv",'wt') as precOutput:
             writer = csv.writer(output, delimiter=',')
             precWriter = csv.writer(precOutput,delimiter=',')
-            writer.writerow(('username', 'Decision Tree', 'Logistic Regression', 'Naive Bayes'))
+            writer.writerow(('username', 'Decision Tree', 'Logistic Regression', 'Naive Bayes','MAX'))
             precWriter.writerow(('username','DT_precision','DT_recall','LR_precision','LR_recall','NB_precision','NB_recall'))
+            print "check"
             for user in content:
                 trainData,trainTarget = parseFile(m.out_dir_original+"/att_cat_"+user+"_train.txt")
                 testData,testTarget = parseFile(m.out_dir_original+"/att_cat_"+user+"_test.txt")
@@ -143,7 +144,7 @@ def run(user_fname):
                 LRrecall = recall_score(predLR, testTarget)
                 NBrecall = recall_score(predNB, testTarget)
 
-                writer.writerow((user,DTAccur,LRfAccur,NBAccur))
+                writer.writerow((user,DTAccur,LRfAccur,NBAccur,max(DTAccur,LRfAccur,NBAccur)))
                 precWriter.writerow((user,DTprec,DTrecall,LRprec,LRrecall,NBprec,NBrecall))
                 print "finished writing "+user+" into accuracy and precision_recall files"
                 maxAccur = max(DTAccur,LRfAccur,NBAccur)
@@ -161,7 +162,7 @@ def run(user_fname):
                     potentialReader.next()
                     for row in potentialReader:
                         # prediction = finalCLF.predict(row[1:].reshape(-1,len(row[1:])))
-                        data = [int() for x in row[1:]]
+                        data = [int(x) for x in row[1:]]
                         npData = array(data)
                         prediction = finalCLF.predict(npData.reshape(-1,len(npData)))
                         if prediction == 1:
@@ -176,8 +177,7 @@ def run(user_fname):
 
 
 if __name__ == "__main__":
-    run("../output/users/users_more_1000.txt")
-
+    pass
     # fileName = sys.argv[1]
     # data,target = parseFile(fileName)
     # trainData, trainTarget, testData, testTarget = getTrainAndTestSet(data,target)
